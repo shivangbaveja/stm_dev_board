@@ -1,0 +1,8 @@
+12:19:45.672 [Worker-14] INFO  org.coocox.codb.common.log.ProcessTimeLog - 47`458`freshExamplesByCompId`1126
+12:19:46.856 [Worker-14] INFO  org.coocox.codb.common.log.ProcessTimeLog - 47`458`freshExamplesByCompId`320
+12:25:58.043 [Worker-18] INFO  org.coocox.codb.common.log.ProcessTimeLog - 47`456`freshExamplesByCompId`670
+12:25:58.982 [Worker-18] INFO  org.coocox.codb.common.log.ProcessTimeLog - 47`467`freshExamplesByCompId`322
+12:26:00.807 [Worker-20] INFO  org.coocox.codb.common.log.ProcessTimeLog - 47`458`freshExamplesByCompId`352
+12:26:06.310 [Worker-21] INFO  org.coocox.codb.common.log.ProcessTimeLog - 47`444`freshExamplesByCompId`806
+20:17:16.195 [Worker-42] INFO  org.coocox.codb.common.log.ProcessTimeLog - 47`444`freshExamplesByCompId`1568
+20:17:17.653 [Worker-41] INFO  org.coocox.codb.common.log.ProcessTimeLog - 47`444`freshExamplesByCompId`853

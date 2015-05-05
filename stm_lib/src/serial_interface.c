@@ -1,7 +1,7 @@
 #include "serial_interface.h"
 
-uint8_t serial_tx_buff[serial_TX_BUFF_SIZE];
-uint8_t serial_rx_buff[serial_RX_BUFF_SIZE];
+uint8_t serial_tx_buff[SERIAL_TX_BUFF_SIZE];
+uint8_t serial_rx_buff[SERIAL_RX_BUFF_SIZE];
 volatile uint16_t serial_rx_index_wr=0, serial_rx_index_rd=0;
 volatile uint16_t serial_rx_count=0;
 volatile uint16_t serial_tx_index_rd=0,serial_tx_index_wr=0,serial_tx_count=0;
@@ -50,7 +50,7 @@ void serial_put_char(uint8_t data)
 	USART_ITConfig(USART2, USART_IT_TXE, DISABLE);
 	serial_tx_count++;
 	USART_ITConfig(USART2, USART_IT_TXE, ENABLE);
-	if(serial_tx_index_wr == serial_TX_BUFF_SIZE)
+	if(serial_tx_index_wr == SERIAL_TX_BUFF_SIZE)
 		serial_tx_index_wr = 0;
 }
 
@@ -64,7 +64,7 @@ char serial_get_char()
     USART_ITConfig(USART2, USART_IT_RXNE, DISABLE);
     serial_rx_count--;
     USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
-    if(serial_rx_index_rd == serial_RX_BUFF_SIZE)
+    if(serial_rx_index_rd == SERIAL_RX_BUFF_SIZE)
     	serial_rx_index_rd=0;
     return data;
 }
@@ -75,7 +75,7 @@ void USART2_IRQHandler(void)
 	{
 		serial_rx_buff[serial_rx_index_wr++] = (u8) USART_ReceiveData(USART2);
 		serial_rx_count++;
-		if(serial_rx_index_wr==serial_RX_BUFF_SIZE)
+		if(serial_rx_index_wr==SERIAL_RX_BUFF_SIZE)
 		{
 			serial_rx_index_wr = 0;
 		}
@@ -89,7 +89,7 @@ void USART2_IRQHandler(void)
 		{
 			USART_SendData(USART2, (uint16_t) serial_tx_buff[serial_tx_index_rd++]);
 			serial_tx_count--;
-			if(serial_tx_index_rd == serial_TX_BUFF_SIZE)
+			if(serial_tx_index_rd == SERIAL_TX_BUFF_SIZE)
 				serial_tx_index_rd = 0;
 		}
 	}
@@ -131,9 +131,9 @@ void UARTSend(const unsigned char *pucBuffer, unsigned long ulCount)
     //
     while(ulCount--)
     {
-        USART_SendData(USART1, *pucBuffer++);// Last Version USART_SendData(USART1,(uint16_t) *pucBuffer++);
+        USART_SendData(USART2, *pucBuffer++);// Last Version USART_SendData(USART1,(uint16_t) *pucBuffer++);
         /* Loop until the end of transmission */
-        while(USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET)
+        while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
         {
         }
     }

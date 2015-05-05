@@ -1,13 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <history>
    <processor signature="arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -g -nostartfiles -Map=stm_dev_board.map -O0 --gc-sections -LC:\CooCox\CoIDE\configuration\ProgramData\stm_dev_board -TC:\CooCox\CoIDE\configuration\ProgramData\stm_dev_board/arm-gcc-link.ld -g">
-      <target file="stm_dev_board.elf" lastModified="14d148dc9ad">
-         <source file="..\obj\stm32f10x_tim.o" lastModified="14d148dbed7"/>
-         <source file="..\obj\system_stm32f10x.o" lastModified="14d148dc06c"/>
-         <source file="..\obj\startup_stm32f10x_hd.o" lastModified="14d148dc112"/>
-         <source file="..\obj\stm32f10x_gpio.o" lastModified="14d148dc235"/>
-         <source file="..\obj\main.o" lastModified="14d148dc2bf"/>
-         <source file="..\obj\stm32f10x_rcc.o" lastModified="14d148dc393"/>
+      <target file="stm_dev_board.elf" lastModified="14d236b8d6d">
+         <source file="..\obj\stm32f10x_tim.o" lastModified="14d236b865d"/>
+         <source file="..\obj\system_stm32f10x.o" lastModified="14d236b86d1"/>
+         <source file="..\obj\startup_stm32f10x_hd.o" lastModified="14d236b8722"/>
+         <source file="..\obj\stm32f10x_gpio.o" lastModified="14d236b87a6"/>
+         <source file="..\obj\main.o" lastModified="14d236b8808"/>
+         <source file="..\obj\stm32f10x_rcc.o" lastModified="14d236b889d"/>
+         <source file="..\obj\stm32f10x_exti.o" lastModified="14d236b892c"/>
+         <source file="..\obj\stm32f10x_usart.o" lastModified="14d236b89e3"/>
+         <source file="..\obj\serial_interface.o" lastModified="14d236b8a58"/>
+         <source file="..\obj\ppm.o" lastModified="14d236b8ac3"/>
+         <source file="..\obj\misc.o" lastModified="14d236b8b26"/>
       </target>
    </processor>
 </history>
