@@ -1,18 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <history>
    <processor signature="arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -g -nostartfiles -Map=stm_dev_board.map -O0 --gc-sections -LC:\CooCox\CoIDE\configuration\ProgramData\stm_dev_board -TC:\CooCox\CoIDE\configuration\ProgramData\stm_dev_board/arm-gcc-link.ld -g">
-      <target file="stm_dev_board.elf" lastModified="14d238aaa75">
-         <source file="..\obj\stm32f10x_tim.o" lastModified="14d238aa3ba"/>
-         <source file="..\obj\system_stm32f10x.o" lastModified="14d238aa428"/>
-         <source file="..\obj\startup_stm32f10x_hd.o" lastModified="14d238aa48f"/>
-         <source file="..\obj\stm32f10x_gpio.o" lastModified="14d238aa50b"/>
-         <source file="..\obj\main.o" lastModified="14d238aa574"/>
-         <source file="..\obj\stm32f10x_rcc.o" lastModified="14d238aa5fc"/>
-         <source file="..\obj\stm32f10x_exti.o" lastModified="14d238aa665"/>
-         <source file="..\obj\stm32f10x_usart.o" lastModified="14d238aa6e9"/>
-         <source file="..\obj\serial_interface.o" lastModified="14d238aa757"/>
-         <source file="..\obj\ppm.o" lastModified="14d238aa7c5"/>
-         <source file="..\obj\misc.o" lastModified="14d238aa82b"/>
+      <target file="stm_dev_board.elf" lastModified="14d24ba8ee7">
+         <source file="..\obj\stm32f10x_tim.o" lastModified="14d24ba8898"/>
+         <source file="..\obj\system_stm32f10x.o" lastModified="14d24ba88fd"/>
+         <source file="..\obj\startup_stm32f10x_hd.o" lastModified="14d24ba8955"/>
+         <source file="..\obj\stm32f10x_gpio.o" lastModified="14d24ba89d5"/>
+         <source file="..\obj\main.o" lastModified="14d24ba8a43"/>
+         <source file="..\obj\stm32f10x_rcc.o" lastModified="14d24ba8ac5"/>
+         <source file="..\obj\stm32f10x_exti.o" lastModified="14d24ba8b30"/>
+         <source file="..\obj\stm32f10x_usart.o" lastModified="14d24ba8bc0"/>
+         <source file="..\obj\serial_interface.o" lastModified="14d24ba8c38"/>
+         <source file="..\obj\misc.o" lastModified="14d24ba8ca7"/>
       </target>
    </processor>
 </history>
