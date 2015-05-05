@@ -25,24 +25,21 @@ void ppm_config()
 	GPIO_InitTypeDef GPIO_InitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	/* GPIOA clock enable */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-
-	/* TIM3 Clock enable */
+	/* Enabling clock for TIM3 and GPIOA */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
 	TIM_DeInit(TIM3);
 
-	/* TIM3 channel 1 pin (PA.06) configuration */
+	/* TIM1 channel 1 pin (PA.06) configuration */
 	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	GPIO_PinRemapConfig(GPIO_FullRemap_TIM3, ENABLE);
-//	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_TIM3 );
+//	GPIO_PinRemapConfig(GPIO_PartialRemap_TIM1, ENABLE);
 
-	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannel = TIM1_CC_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -52,31 +49,28 @@ void ppm_config()
 	TIM_TimeBaseStructure.TIM_Prescaler= (72-1);
 	TIM_TimeBaseStructure.TIM_ClockDivision=TIM_CKD_DIV1;
 	TIM_TimeBaseStructure.TIM_CounterMode=TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-	TIM_ClearFlag(TIM3, TIM_FLAG_Update);
-	TIM_ARRPreloadConfig(TIM3, ENABLE);
+	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);
+	TIM_ClearFlag(TIM1, TIM_FLAG_Update);
+	TIM_ARRPreloadConfig(TIM1, ENABLE);
 
 	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
 	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
 	TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
 	TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
 	TIM_ICInitStructure.TIM_ICFilter = 0;
-	TIM_ICInit(TIM3, &TIM_ICInitStructure);
+	TIM_ICInit(TIM1, &TIM_ICInitStructure);
 
-	TIM_Cmd(TIM3, ENABLE);
-
-	/* Enable TIM3 */
-	TIM_Cmd(TIM3, ENABLE);
+	TIM_Cmd(TIM1, ENABLE);
 
 	/* Enable CC1 interrupt */
-	TIM_ITConfig(TIM3, TIM_IT_CC1, ENABLE);
+	TIM_ITConfig(TIM1, TIM_IT_CC1, ENABLE);//TIM_IT_CC1
 
 	/* Clear CC1 Flag*/
-	TIM_ClearFlag(TIM3, TIM_FLAG_CC1);
-	TIM_ClearITPendingBit(TIM3, TIM_IT_CC1);
+	TIM_ClearFlag(TIM1, TIM_FLAG_CC1);
+	TIM_ClearITPendingBit(TIM1, TIM_IT_CC1);
 }
 
-void TIM3_IRQHandler()
+void TIM1_CC_IRQHandler()
 {
 		print_channel_values();
 ////	if ((TIM3_SR & PPM_CC_IF) != 0) {

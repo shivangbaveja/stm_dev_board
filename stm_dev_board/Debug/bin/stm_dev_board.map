@@ -375,7 +375,7 @@ Linker script and memory map
 
                 0x20010000                _eram = 0x20010000
 
-.text           0x08000000     0x1a48
+.text           0x08000000     0x1a3c
  *(.isr_vector)
  .isr_vector    0x08000000      0x134 ..\obj\startup_stm32f10x_hd.o
                 0x08000000                g_pfnVectors
@@ -440,7 +440,6 @@ Linker script and memory map
                 0x08000c78                TIM8_TRG_COM_IRQHandler
                 0x08000c78                TIM8_CC_IRQHandler
                 0x08000c78                DebugMon_Handler
-                0x08000c78                TIM1_CC_IRQHandler
                 0x08000c78                HardFault_Handler
                 0x08000c78                TIM6_IRQHandler
                 0x08000c78                SysTick_Handler
@@ -469,6 +468,7 @@ Linker script and memory map
                 0x08000c78                I2C1_EV_IRQHandler
                 0x08000c78                DMA1_Channel6_IRQHandler
                 0x08000c78                UART4_IRQHandler
+                0x08000c78                TIM3_IRQHandler
                 0x08000c78                RCC_IRQHandler
                 0x08000c78                TIM1_TRG_COM_IRQHandler
                 0x08000c78                DMA1_Channel1_IRQHandler
@@ -566,17 +566,17 @@ Linker script and memory map
                 0x080017e4       0x30 ..\obj\ppm.o
                 0x080017e4                led_config
  .text.ppm_config
-                0x08001814       0xdc ..\obj\ppm.o
+                0x08001814       0xd0 ..\obj\ppm.o
                 0x08001814                ppm_config
- .text.TIM3_IRQHandler
-                0x080018f0        0xc ..\obj\ppm.o
-                0x080018f0                TIM3_IRQHandler
+ .text.TIM1_CC_IRQHandler
+                0x080018e4        0xc ..\obj\ppm.o
+                0x080018e4                TIM1_CC_IRQHandler
  .text.print_channel_values
-                0x080018fc       0x7c ..\obj\ppm.o
-                0x080018fc                print_channel_values
+                0x080018f0       0x7c ..\obj\ppm.o
+                0x080018f0                print_channel_values
  .text.NVIC_Init
-                0x08001978       0xc4 ..\obj\misc.o
-                0x08001978                NVIC_Init
+                0x0800196c       0xc4 ..\obj\misc.o
+                0x0800196c                NVIC_Init
  *(.init)
  *(.fini)
  *crtbegin.o(.ctors)
@@ -590,38 +590,38 @@ Linker script and memory map
  *(SORT(.dtors.*))
  *(.dtors)
  *(.rodata*)
- .rodata        0x08001a3c        0xc ..\obj\ppm.o
+ .rodata        0x08001a30        0xc ..\obj\ppm.o
  *(.eh_fram e*)
 
-.glue_7         0x08001a48        0x0
+.glue_7         0x08001a3c        0x0
  .glue_7        0x00000000        0x0 linker stubs
 
-.glue_7t        0x08001a48        0x0
+.glue_7t        0x08001a3c        0x0
  .glue_7t       0x00000000        0x0 linker stubs
 
-.vfp11_veneer   0x08001a48        0x0
+.vfp11_veneer   0x08001a3c        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x08001a48        0x0
+.v4_bx          0x08001a3c        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
-.iplt           0x08001a48        0x0
+.iplt           0x08001a3c        0x0
  .iplt          0x00000000        0x0 ..\obj\stm32f10x_tim.o
 
-.rel.dyn        0x08001a48        0x0
+.rel.dyn        0x08001a3c        0x0
  .rel.iplt      0x00000000        0x0 ..\obj\stm32f10x_tim.o
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x08001a48                __exidx_start = .
+                0x08001a3c                __exidx_start = .
 
 .ARM.exidx
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-                0x08001a48                __exidx_end = .
-                0x08001a48                __etext = .
-                0x08001a48                _sidata = __etext
+                0x08001a3c                __exidx_end = .
+                0x08001a3c                __etext = .
+                0x08001a3c                _sidata = __etext
 
-.data           0x20000000       0x14 load address 0x08001a48
+.data           0x20000000       0x14 load address 0x08001a3c
                 0x20000000                __data_start__ = .
                 0x20000000                _sdata = __data_start__
  *(vtable)
@@ -646,10 +646,10 @@ Linker script and memory map
                 0x20000014                __data_end__ = .
                 0x20000014                _edata = __data_end__
 
-.igot.plt       0x20000014        0x0 load address 0x08001a5c
+.igot.plt       0x20000014        0x0 load address 0x08001a50
  .igot.plt      0x00000000        0x0 ..\obj\stm32f10x_tim.o
 
-.bss            0x20000014       0xf8 load address 0x08001a5c
+.bss            0x20000014       0xf8 load address 0x08001a50
                 0x20000014                . = ALIGN (0x4)
                 0x20000014                __bss_start__ = .
                 0x20000014                _sbss = __bss_start__
@@ -683,7 +683,7 @@ Linker script and memory map
  *(.heap*)
                 0x2000010c                __HeapLimit = .
 
-.co_stack       0x2000010c      0x404 load address 0x08001b54
+.co_stack       0x2000010c      0x404 load address 0x08001b48
                 0x20000110                . = ALIGN (0x8)
  *fill*         0x2000010c        0x4 
  *(.co_stack .co_stack.*)
@@ -723,7 +723,7 @@ OUTPUT(stm_dev_board.elf elf32-littlearm)
  .debug_info    0x000043e3      0x837 ..\obj\ppm.o
  .debug_info    0x00004c1a      0x53d ..\obj\misc.o
 
-.debug_abbrev   0x00000000      0xde6
+.debug_abbrev   0x00000000      0xdfc
  .debug_abbrev  0x00000000      0x1b0 ..\obj\stm32f10x_tim.o
  .debug_abbrev  0x000001b0      0x14c ..\obj\system_stm32f10x.o
  .debug_abbrev  0x000002fc       0xa7 ..\obj\startup_stm32f10x_hd.o
@@ -732,8 +732,8 @@ OUTPUT(stm_dev_board.elf elf32-littlearm)
  .debug_abbrev  0x0000062c      0x1ba ..\obj\stm32f10x_rcc.o
  .debug_abbrev  0x000007e6      0x162 ..\obj\stm32f10x_usart.o
  .debug_abbrev  0x00000948      0x1ee ..\obj\serial_interface.o
- .debug_abbrev  0x00000b36      0x16b ..\obj\ppm.o
- .debug_abbrev  0x00000ca1      0x145 ..\obj\misc.o
+ .debug_abbrev  0x00000b36      0x181 ..\obj\ppm.o
+ .debug_abbrev  0x00000cb7      0x145 ..\obj\misc.o
 
 .debug_aranges  0x00000000      0x708
  .debug_aranges
@@ -769,7 +769,7 @@ OUTPUT(stm_dev_board.elf elf32-littlearm)
  .debug_ranges  0x00000600       0x38 ..\obj\ppm.o
  .debug_ranges  0x00000638       0x30 ..\obj\misc.o
 
-.debug_line     0x00000000     0x260f
+.debug_line     0x00000000     0x260e
  .debug_line    0x00000000      0xb07 ..\obj\stm32f10x_tim.o
  .debug_line    0x00000b07      0x22f ..\obj\system_stm32f10x.o
  .debug_line    0x00000d36       0xae ..\obj\startup_stm32f10x_hd.o
@@ -778,10 +778,10 @@ OUTPUT(stm_dev_board.elf elf32-littlearm)
  .debug_line    0x000013e7      0x4ec ..\obj\stm32f10x_rcc.o
  .debug_line    0x000018d3      0x4c2 ..\obj\stm32f10x_usart.o
  .debug_line    0x00001d95      0x311 ..\obj\serial_interface.o
- .debug_line    0x000020a6      0x2fc ..\obj\ppm.o
- .debug_line    0x000023a2      0x26d ..\obj\misc.o
+ .debug_line    0x000020a6      0x2fb ..\obj\ppm.o
+ .debug_line    0x000023a1      0x26d ..\obj\misc.o
 
-.debug_str      0x00000000     0x2393
+.debug_str      0x00000000     0x2396
  .debug_str     0x00000000      0xd2e ..\obj\stm32f10x_tim.o
                                 0xdf1 (size before relaxing)
  .debug_str     0x00000d2e      0x17e ..\obj\system_stm32f10x.o
@@ -798,9 +798,9 @@ OUTPUT(stm_dev_board.elf elf32-littlearm)
                                 0x6a4 (size before relaxing)
  .debug_str     0x00001b71      0x5ad ..\obj\serial_interface.o
                                 0x92c (size before relaxing)
- .debug_str     0x0000211e      0x110 ..\obj\ppm.o
-                                0x9eb (size before relaxing)
- .debug_str     0x0000222e      0x165 ..\obj\misc.o
+ .debug_str     0x0000211e      0x113 ..\obj\ppm.o
+                                0x9ee (size before relaxing)
+ .debug_str     0x00002231      0x165 ..\obj\misc.o
                                 0x3d2 (size before relaxing)
 
 .comment        0x00000000       0x70
@@ -839,7 +839,7 @@ OUTPUT(stm_dev_board.elf elf32-littlearm)
  .ARM.attributes
                 0x000001cb       0x33 ..\obj\misc.o
 
-.debug_frame    0x00000000     0x1e54
+.debug_frame    0x00000000     0x1e50
  .debug_frame   0x00000000      0xe2c ..\obj\stm32f10x_tim.o
  .debug_frame   0x00000e2c       0x98 ..\obj\system_stm32f10x.o
  .debug_frame   0x00000ec4       0x4c ..\obj\startup_stm32f10x_hd.o
@@ -848,5 +848,5 @@ OUTPUT(stm_dev_board.elf elf32-littlearm)
  .debug_frame   0x00001210      0x4f4 ..\obj\stm32f10x_rcc.o
  .debug_frame   0x00001704      0x490 ..\obj\stm32f10x_usart.o
  .debug_frame   0x00001b94      0x104 ..\obj\serial_interface.o
- .debug_frame   0x00001c98       0xe4 ..\obj\ppm.o
- .debug_frame   0x00001d7c       0xd8 ..\obj\misc.o
+ .debug_frame   0x00001c98       0xe0 ..\obj\ppm.o
+ .debug_frame   0x00001d78       0xd8 ..\obj\misc.o
