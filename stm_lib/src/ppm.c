@@ -4,6 +4,39 @@
 uint32_t channel_pulses[7];
 uint32_t last_pulse_time=0;
 uint8_t ppm_current_channel=0, ppm_data_ok=0, ppm_frame_complete=0;
+uint32_t IC3ReadValue1=0, IC3ReadValue2=0, Capture=0;
+uint8_t CaptureNumber=0;
+uint8_t start=0;
+uint8_t i=0,len=0;
+unsigned char str[10];
+uint32_t last=0, now=0;
+
+TIM_ICInitTypeDef  TIM_ICInitStructure;
+
+void timing_config()
+{
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+
+//	NVIC_InitTypeDef NVIC_InitStructure;
+//
+//	/* Enable the TIM3 global Interrupt */
+//	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn ;
+//	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+//	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+//	NVIC_Init(&NVIC_InitStructure);
+
+	 TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+	TIM_TimeBaseStructure.TIM_Prescaler = 36000-1;
+	TIM_TimeBaseStructure.TIM_Period = 50000;
+	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+
+	/* TIM enable counter */
+	TIM_Cmd(TIM2, ENABLE);
+//	TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
+}
 
 void led_config()
 {
@@ -20,68 +53,63 @@ void led_config()
 
 void ppm_config()
 {
-	TIM_ICInitTypeDef  TIM_ICInitStructure;
-	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-	GPIO_InitTypeDef GPIO_InitStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
+	  /* TIM3 clock enable */
+	  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
-	/* Enabling clock for TIM3 and GPIOA */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	  /* GPIOA and GPIOB clock enable */
+	  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
-	TIM_DeInit(TIM3);
+	  NVIC_InitTypeDef NVIC_InitStructure;
 
-	/* TIM1 channel 1 pin (PA.06) configuration */
-	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_6;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	  /* Enable the TIM3 global Interrupt */
+	  NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+	  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	  NVIC_Init(&NVIC_InitStructure);
 
-//	GPIO_PinRemapConfig(GPIO_PartialRemap_TIM1, ENABLE);
+	  GPIO_InitTypeDef GPIO_InitStructure;
 
-	NVIC_InitStructure.NVIC_IRQChannel = TIM1_CC_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-	
-	TIM_TimeBaseStructure.TIM_Period=0xFFFF;
-	TIM_TimeBaseStructure.TIM_Prescaler= (72-1);
-	TIM_TimeBaseStructure.TIM_ClockDivision=TIM_CKD_DIV1;
-	TIM_TimeBaseStructure.TIM_CounterMode=TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);
-	TIM_ClearFlag(TIM1, TIM_FLAG_Update);
-	TIM_ARRPreloadConfig(TIM1, ENABLE);
+	  /* TIM3 channel 2 pin (PA.07) configuration */
+	  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_7;
+	  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
-	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
-	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+	  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	  TIM_ICInitTypeDef  TIM_ICInitStructure;
+	  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+
+	TIM_TimeBaseStructure.TIM_Prescaler = 72-1;
+	TIM_TimeBaseStructure.TIM_Period = 0xffff;
+	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+
+	TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
+	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
 	TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
 	TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
-	TIM_ICInitStructure.TIM_ICFilter = 0;
-	TIM_ICInit(TIM1, &TIM_ICInitStructure);
+	TIM_ICInitStructure.TIM_ICFilter = 0x0;
+	TIM_ICInit(TIM3, &TIM_ICInitStructure);
 
-	TIM_Cmd(TIM1, ENABLE);
+	/* TIM enable counter */
+	TIM_Cmd(TIM3, ENABLE);
 
-	/* Enable CC1 interrupt */
-	TIM_ITConfig(TIM1, TIM_IT_CC1, ENABLE);//TIM_IT_CC1
-
-	/* Clear CC1 Flag*/
-	TIM_ClearFlag(TIM1, TIM_FLAG_CC1);
-	TIM_ClearITPendingBit(TIM1, TIM_IT_CC1);
+	/* Enable the CC2 Interrupt Request */
+	TIM_ITConfig(TIM3, TIM_IT_CC2, ENABLE);
+	start=0;
 }
 
-void TIM1_CC_IRQHandler()
+void TIM3_IRQHandler(void)
 {
-		print_channel_values();
-////	if ((TIM3_SR & PPM_CC_IF) != 0) {
-////	    timer_clear_flag(TIM2, PPM_CC_IF);
-////
-////	    uint32_t now = timer_get_counter(TIM2) + timer_rollover_cnt;
-////	    ppm_decode_frame(now);
-////	  } else if ((TIM3_SR & TIM_SR_UIF) != 0) {
-////	    timer_rollover_cnt += (1 << 16);
-////	    timer_clear_flag(TIM2, TIM_SR_UIF);
-////	  }
+	 if(TIM_GetITStatus(TIM3, TIM_IT_CC2) == SET)
+	  {
+		 TIM_ClearITPendingBit(TIM3, TIM_IT_CC2);
+		 now=TIM_GetCapture2(TIM3);
+//		 ppm_decode_frame();
+		 get_pulse();
+	  }
 }
 
 void radio_input_init()
@@ -99,27 +127,25 @@ void radio_input_init()
  * - Frame space
  * - correct number of channels
  * - Frame space */
-void ppm_decode_frame(uint32_t pulse_time)
+void ppm_decode_frame()
 {
-  uint32_t length = pulse_time - last_pulse_time;
-  last_pulse_time = pulse_time;
-
-  if (ppm_current_channel == RADIO_CHANNEL_NUM)
-  {
-	  if (length > PPM_FRAME_SYNC_MIN_LEN &&
-        length < PPM_FRAME_SYNC_MAX_LEN)
-	  {
-	  if(ppm_data_ok)
-      {
-        ppm_frame_complete = 1;
-        ppm_data_ok = 0;
-	  }
-      ppm_current_channel = 0;
-    }
-    else
+	uint32_t length = now - last;
+	last = now;
+	if (ppm_current_channel == RADIO_CHANNEL_NUM)
     {
-      ppm_data_ok = 0;
-    }
+	  if (length > PPM_FRAME_SYNC_MIN_LEN &&  length < PPM_FRAME_SYNC_MAX_LEN)
+	  {
+		  if(ppm_data_ok)
+		  {
+			ppm_frame_complete = 1;
+			ppm_data_ok = 0;
+		  }
+		  ppm_current_channel = 0;
+	  }
+	  else
+	  {
+		  ppm_data_ok = 0;
+	  }
   }
   else
   {
@@ -139,6 +165,18 @@ void ppm_decode_frame(uint32_t pulse_time)
   }
 }
 
+void get_pulse()
+{
+	uint32_t length = now - last;
+	last = now;
+	if (length> PPM_FRAME_DATA_MIN_LEN && length < PPM_FRAME_DATA_MAX_LEN)
+	{
+		UARTSend((unsigned char *)"Ch:",3);
+		len=uint_to_serial(str,length);
+		UARTSend(str,len);
+		UARTSend((unsigned char *)",\r",2);
+	}
+}
 
 void print_channel_values()
 {
@@ -146,11 +184,11 @@ void print_channel_values()
 	unsigned char str[10];
 	for(i=0;i<7;i++)
 	{
-		UARTSend((unsigned char *)"Ch",2);
+		UARTSend((unsigned char *)",Ch",3);
 		serial_put_char(i+49);
 		UARTSend((unsigned char *)":",1);
 		len=uint_to_serial(str,channel_pulses[i]);
 		UARTSend(str,len);
 	}
-	UARTSend((unsigned char *)",\r",3);
+	UARTSend((unsigned char *)"\r",3);
 }
