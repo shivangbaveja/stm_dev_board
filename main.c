@@ -24,16 +24,26 @@ int main(void)
 		{
 			if((time_now + 50000 - old_time) > 2000)
 			{
-				// 1 Hz timer
+				// 10 Hz timer
 				old_time = time_now;
+//				UARTSend((unsigned char *)"Ch:",3);
+//				len=uint_to_serial(str,debug_counter);
+//				UARTSend(str,len);
+//				UARTSend((unsigned char *)",\r",2);
+				debug_counter=0;
 			}
 		}
 		else
 		{
 			if((time_now - old_time) > 2000)
 			{
-				//1 Hz timer
+				//10 Hz timer
 				old_time = time_now;
+//				UARTSend((unsigned char *)"Ch:",3);
+//				len=uint_to_serial(str,debug_counter);
+//				UARTSend(str,len);
+//				UARTSend((unsigned char *)",\r",2);
+				debug_counter=0;
 			}
 		}
 		if(ppm_frame_complete==1)

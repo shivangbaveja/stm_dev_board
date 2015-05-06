@@ -2,14 +2,12 @@
 
 // All the variables required for ppm capture and decode
 uint32_t channel_pulses[7];
-uint32_t last_pulse_time=0;
+uint32_t last_pulse_time=0, debug_counter=0;
 uint8_t ppm_current_channel=0, ppm_data_ok=0, ppm_frame_complete=0;
 uint32_t IC3ReadValue1=0, IC3ReadValue2=0, Capture=0;
-uint8_t CaptureNumber=0;
-uint8_t start=0;
 uint8_t i=0,len=0;
 unsigned char str[10];
-uint32_t last=0, now=0;
+uint16_t last=0, now=0;
 
 TIM_ICInitTypeDef  TIM_ICInitStructure;
 
@@ -27,11 +25,11 @@ void timing_config()
 //	NVIC_Init(&NVIC_InitStructure);
 
 	 TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-	TIM_TimeBaseStructure.TIM_Prescaler = 36000-1;
+	TIM_TimeBaseStructure.TIM_Prescaler = 3600-1;
 	TIM_TimeBaseStructure.TIM_Period = 50000;
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
 
 	/* TIM enable counter */
 	TIM_Cmd(TIM2, ENABLE);
@@ -98,7 +96,6 @@ void ppm_config()
 
 	/* Enable the CC2 Interrupt Request */
 	TIM_ITConfig(TIM3, TIM_IT_CC2, ENABLE);
-	start=0;
 }
 
 void TIM3_IRQHandler(void)
@@ -107,8 +104,8 @@ void TIM3_IRQHandler(void)
 	  {
 		 TIM_ClearITPendingBit(TIM3, TIM_IT_CC2);
 		 now=TIM_GetCapture2(TIM3);
-//		 ppm_decode_frame();
-		 get_pulse();
+		 ppm_decode_frame();
+		 debug_counter++;
 	  }
 }
 
@@ -129,47 +126,66 @@ void radio_input_init()
  * - Frame space */
 void ppm_decode_frame()
 {
-	uint32_t length = now - last;
-	last = now;
+	uint16_t length;
+	if(now < last)
+	{
+		length = now + 0xFFFF - last;
+		last=now;
+	}
+	else
+	{
+		length=now-last;
+		last=now;
+	}
 	if (ppm_current_channel == RADIO_CHANNEL_NUM)
-    {
-	  if (length > PPM_FRAME_SYNC_MIN_LEN &&  length < PPM_FRAME_SYNC_MAX_LEN)
-	  {
-		  if(ppm_data_ok)
-		  {
-			ppm_frame_complete = 1;
+	{
+		if (length > PPM_FRAME_SYNC_MIN_LEN &&  length < PPM_FRAME_SYNC_MAX_LEN)
+		{
+			if(ppm_data_ok)
+			{
+				ppm_frame_complete = 1;
+				ppm_data_ok = 0;
+			}
+			ppm_current_channel = 0;
+		}
+		else
+		{
 			ppm_data_ok = 0;
-		  }
-		  ppm_current_channel = 0;
-	  }
-	  else
-	  {
-		  ppm_data_ok = 0;
-	  }
-  }
-  else
-  {
-    if (length > PPM_FRAME_DATA_MIN_LEN && length < PPM_FRAME_DATA_MAX_LEN)
-    {
-      channel_pulses[ppm_current_channel] = length;
-      ppm_current_channel++;
-      if (ppm_current_channel == RADIO_CHANNEL_NUM) {
-        ppm_data_ok = 1;
-      }
-    }
-    else
-    {
-      ppm_current_channel = RADIO_CHANNEL_NUM;
-      ppm_data_ok=0;
-    }
-  }
+		}
+	}
+	else
+	{
+		if (length > PPM_FRAME_DATA_MIN_LEN && length < PPM_FRAME_DATA_MAX_LEN)
+		{
+			channel_pulses[ppm_current_channel] = length;
+			ppm_current_channel++;
+			if (ppm_current_channel == RADIO_CHANNEL_NUM)
+			{
+				ppm_data_ok = 1;
+			}
+		}
+		else
+		{
+			ppm_current_channel = RADIO_CHANNEL_NUM;
+			ppm_data_ok=0;
+		}
+	}
 }
 
 void get_pulse()
 {
-	uint32_t length = now - last;
-	last = now;
-	if (length> PPM_FRAME_DATA_MIN_LEN && length < PPM_FRAME_DATA_MAX_LEN)
+	uint16_t length;
+	if(now < last)
+	{
+		length = now + 0xFFFF - last;
+		last=now;
+	}
+	else
+	{
+		length=now-last;
+		last=now;
+	}
+	if (1)//length> PPM_FRAME_DATA_MIN_LEN && length < PPM_FRAME_DATA_MAX_LEN
 	{
 		UARTSend((unsigned char *)"Ch:",3);
 		len=uint_to_serial(str,length);
