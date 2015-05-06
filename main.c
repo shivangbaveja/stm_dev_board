@@ -19,38 +19,14 @@ int main(void)
 	timing_config();
     while(1)
     {
-    	time_now = TIM_GetCounter(TIM2);
-		if(time_now < old_time)
-		{
-			if((time_now + 50000 - old_time) > 2000)
-			{
-				// 10 Hz timer
-				old_time = time_now;
-//				UARTSend((unsigned char *)"Ch:",3);
-//				len=uint_to_serial(str,debug_counter);
-//				UARTSend(str,len);
-//				UARTSend((unsigned char *)",\r",2);
-				debug_counter=0;
-			}
-		}
-		else
-		{
-			if((time_now - old_time) > 2000)
-			{
-				//10 Hz timer
-				old_time = time_now;
-//				UARTSend((unsigned char *)"Ch:",3);
-//				len=uint_to_serial(str,debug_counter);
-//				UARTSend(str,len);
-//				UARTSend((unsigned char *)",\r",2);
-				debug_counter=0;
-			}
-		}
+    	//As soon as the whole ppm frame is received, ppm_frame_complete is set to 1
+    	//All the values are then sent on one UART port using function print_channel_values
 		if(ppm_frame_complete==1)
 		{
 			ppm_frame_complete=0;
 			print_channel_values();
 		}
+
     	//LED Blinking code to ensure that the code is working
     	 /* Toggle LEDs which connected to PF6*/
 		GPIOF->ODR ^= GPIO_Pin_6;
